@@ -58,39 +58,39 @@ def main(args):
     scaler = torch.amp.GradScaler()
 
     for epoch in range(args.epochs):
-        # classifier_head.train()
-        # epoch_loss = []
-        # train_loader = tqdm(train_loader, desc=f"Train Epoch {epoch}")
+        classifier_head.train()
+        epoch_loss = []
+        train_loader = tqdm(train_loader, desc=f"Train Epoch {epoch}")
 
-        # for images, labels in train_loader:
-        #     images = images.to(args.device)
-        #     labels = labels.to(args.device)
+        for images, labels in train_loader:
+            images = images.to(args.device)
+            labels = labels.to(args.device)
 
-        #     # Use autocast for mixed precision
-        #     with torch.amp.autocast(args.device):
-        #         feature = backbone_model.get_image_features(images)
-        #         outputs = classifier_head(feature)
-        #         loss = loss_fn(outputs, labels)
-        #         epoch_loss.append(loss.item())
-        #     # Scale the loss and call backward
-        #     scaler.scale(loss).backward()
-        #     scaler.step(optimizer)
-        #     scaler.update()
-        #     optimizer.zero_grad()
+            # Use autocast for mixed precision
+            with torch.amp.autocast(args.device):
+                feature = backbone_model.get_image_features(images)
+                outputs = classifier_head(feature)
+                loss = loss_fn(outputs, labels)
+                epoch_loss.append(loss.item())
+            # Scale the loss and call backward
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+            optimizer.zero_grad()
 
-        #     # Log the loss to wandb
-        #     if args.wandb:
-        #         wandb.log({"loss": loss})
+            # Log the loss to wandb
+            if args.wandb:
+                wandb.log({"loss": loss})
 
-        #     # Update tqdm description with the current loss
-        #     train_loader.set_description(f"Train Epoch {epoch}, Loss: {np.mean(epoch_loss):.4f}")
+            # Update tqdm description with the current loss
+            train_loader.set_description(f"Train Epoch {epoch}, Loss: {np.mean(epoch_loss):.4f}")
 
-        # print(f"Train Epoch {epoch}, Loss: {np.mean(epoch_loss):.4f}")
-        # if args.wandb:
-        #     wandb.log({"train_loss": np.mean(epoch_loss)})
+        print(f"Train Epoch {epoch}, Loss: {np.mean(epoch_loss):.4f}")
+        if args.wandb:
+            wandb.log({"train_loss": np.mean(epoch_loss)})
 
-        # # Step the scheduler at the end of each epoch
-        # scheduler.step()
+        # Step the scheduler at the end of each epoch
+        scheduler.step()
 
         # Validation
         backbone_model.eval()
