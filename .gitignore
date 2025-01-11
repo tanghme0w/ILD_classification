@@ -1,0 +1,12 @@
+__pycache__/
+clip-vit-large-patch14/
+data/
+raw_data/
+wandb/
+MedAI/
+.cursorignore
+.DS_Store
+label4Tang.csv
+*.png
+*.jpg
+*.jpeg
